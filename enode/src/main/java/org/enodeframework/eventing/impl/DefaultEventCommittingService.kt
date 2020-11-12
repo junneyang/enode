@@ -137,12 +137,12 @@ class DefaultEventCommittingService(private val memoryCache: IMemoryCache, priva
             publishDomainEventAsync(eventCommittingContext.processingCommand, eventCommittingContext.eventStream).thenAccept {
                 processDuplicateAggregateRootRecursively(index + 1, contexts, eventMailBox)
             }
+            return
+        }
+        if (eventCommittingContext.eventStream.version == 1) {
+            handleFirstEventDuplicationAsync(eventCommittingContext, 0).thenAccept { processDuplicateAggregateRootRecursively(index + 1, contexts, eventMailBox) }
         } else {
-            if (eventCommittingContext.eventStream.version == 1) {
-                handleFirstEventDuplicationAsync(eventCommittingContext, 0).thenAccept { processDuplicateAggregateRootRecursively(index + 1, contexts, eventMailBox) }
-            } else {
-                resetCommandMailBoxConsumingSequence(eventCommittingContext, eventCommittingContext.processingCommand.sequence, duplicateCommandIdList).thenAccept { processDuplicateAggregateRootRecursively(index + 1, contexts, eventMailBox) }
-            }
+            resetCommandMailBoxConsumingSequence(eventCommittingContext, eventCommittingContext.processingCommand.sequence, duplicateCommandIdList).thenAccept { processDuplicateAggregateRootRecursively(index + 1, contexts, eventMailBox) }
         }
     }
 
