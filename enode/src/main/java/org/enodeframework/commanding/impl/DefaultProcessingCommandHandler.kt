@@ -202,7 +202,7 @@ class DefaultProcessingCommandHandler(private val eventStore: IEventStore, priva
                             publishExceptionAsync(processingCommand, realException as IDomainException, 0)
                                     .thenAccept { future.complete(true) }
                         } else {
-                            completeCommand(processingCommand, CommandStatus.Failed, realException.javaClass.name, exception.message)
+                            completeCommand(processingCommand, CommandStatus.Failed, realException.javaClass.name, realException.message)
                                     .thenAccept { future.complete(true) }
                         }
                     }
@@ -248,7 +248,7 @@ class DefaultProcessingCommandHandler(private val eventStore: IEventStore, priva
                 message.mergeItems(processingCommand.message.items)
                 return publishMessageAsync(processingCommand, message, 0)
             }
-            return completeCommand(processingCommand, CommandStatus.Success, null, null)
+            return completeCommand(processingCommand, CommandStatus.Success, "", "")
         }
         return completeCommand(processingCommand, CommandStatus.Failed, String::class.java.name, errorMessage)
     }
@@ -285,7 +285,7 @@ class DefaultProcessingCommandHandler(private val eventStore: IEventStore, priva
         return HandlerFindResult(HandlerFindStatus.Found, handlerData.listHandlers.get(0));
     }
 
-    private fun completeCommand(processingCommand: ProcessingCommand, commandStatus: CommandStatus, resultType: String?, result: String?): CompletableFuture<Boolean> {
+    private fun completeCommand(processingCommand: ProcessingCommand, commandStatus: CommandStatus, resultType: String, result: String?): CompletableFuture<Boolean> {
         val commandResult = CommandResult(commandStatus, processingCommand.message.id, processingCommand.message.aggregateRootId, result, resultType)
         return processingCommand.mailBox.completeMessage(processingCommand, commandResult)
     }
