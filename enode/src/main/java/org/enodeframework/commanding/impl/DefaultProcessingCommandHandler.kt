@@ -215,6 +215,9 @@ class DefaultProcessingCommandHandler(private val eventStore: IEventStore, priva
 
     private fun getRealException(exception: Throwable): Throwable {
         if (exception is CompletionException) {
+            if (exception.cause is IDomainException) {
+                return exception.cause!!
+            }
             return Arrays.stream(exception.suppressed)
                     .filter { x: Throwable? -> x is IDomainException }
                     .findFirst()

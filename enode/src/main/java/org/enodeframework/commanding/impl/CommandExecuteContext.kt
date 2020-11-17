@@ -56,7 +56,7 @@ class CommandExecuteContext(
     /**
      * Add a new aggregate into the current command context synchronously, and then return a completed task object.
      */
-    override fun addAsync(aggregateRoot: IAggregateRoot): CompletableFuture<Boolean>? {
+    override fun addAsync(aggregateRoot: IAggregateRoot): CompletableFuture<Boolean> {
         add(aggregateRoot)
         return Task.completedTask
     }
