@@ -1,5 +1,6 @@
 package org.enodeframework.common.io
 
+import com.ea.async.Async
 import org.enodeframework.common.exception.EnodeInterruptException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CountDownLatch
@@ -22,7 +23,7 @@ object Task {
 
     @JvmStatic
     fun <T> await(future: CompletableFuture<T>): T {
-        return future.join()
+        return Async.await(future)
     }
 
     @JvmStatic

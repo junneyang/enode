@@ -1,5 +1,6 @@
 package org.enodeframework.common.container;
 
+import com.ea.async.Async;
 import org.enodeframework.common.utils.Assert;
 
 /**
@@ -8,6 +9,10 @@ import org.enodeframework.common.utils.Assert;
 public class ObjectContainer {
 
     public static IObjectContainer INSTANCE;
+
+    static {
+        Async.init();
+    }
 
     public static String[] BASE_PACKAGES = {};
 
